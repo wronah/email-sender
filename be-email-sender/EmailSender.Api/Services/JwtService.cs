@@ -24,7 +24,7 @@ public class JwtService(IConfiguration configuration) : IJwtService
             issuer: configuration["Jwt:Issuer"],
             audience: configuration["Jwt:Audience"],
             claims: claims,
-            expires: null,
+            expires: DateTime.Now.AddYears(1),
             signingCredentials: credentials
         );
 
