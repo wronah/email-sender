@@ -10,18 +10,19 @@ public class EmailService(IConfiguration configuration) : IEmailService
     {
         try
         {
-            using var client = new SmtpClient(configuration["Smtp:Host"], Int32.Parse(configuration["Smtp:Port"]!));
-            client.Credentials = new NetworkCredential(configuration["Smtp:Username"], configuration["Smtp:Password"]);
-            client.EnableSsl = Convert.ToBoolean(configuration["Smtp:EnableSsl"]);
-
-            var mailMessage = new MailMessage
+            using var client = new SmtpClient(configuration["Smtp:Host"], Int32.Parse(configuration["Smtp:Port"]!))
             {
-                From = new MailAddress(configuration["Smtp:FromEmail"]!, configuration["Smtp:FromName"]),
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = false,
+                Credentials = new NetworkCredential(configuration["Smtp:Username"], configuration["Smtp:Password"]),
+                EnableSsl = Convert.ToBoolean(configuration["Smtp:EnableSsl"])
             };
-            mailMessage.To.Add(to);
+
+            var mailMessage = new MailMessage(
+                new MailAddress(configuration["Smtp:FromEmail"]!,
+                configuration["Smtp:FromName"]).ToString(),
+                to,
+                subject,
+                body
+            );
 
             await client.SendMailAsync(mailMessage);
             return true;
